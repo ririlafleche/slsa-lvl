@@ -1,0 +1,50 @@
+name: Build and generate SLSA attestation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  id-token: write  # pour permettre la signature
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Étape pour vérifier le code source
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Étape pour générer le hash SHA-256 et l'encoder en base64
+      - name: Generate hashes
+        shell: bash
+        id: hash
+        run: |
+          # Générer le hash SHA-256 de l'artefact (ici, le .jar)
+          artifact="build/libs/slsa-lvl-0.0.1-SNAPSHOT.jar"
+          hash=$(sha256sum $artifact | awk '{print $1}')
+          
+          # Encoder le hash en base64
+          encoded_hash=$(echo -n $hash | base64)
+          
+          # Mettre le hash encodé comme output
+          echo "::set-output name=hashes::$encoded_hash"
+  provenance:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Utilisation de l'action SLSA pour générer la provenance
+      - name: Generate Provenance Attestation
+        uses: slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@v1.2.0
+        with:
+          # Passer le hash généré dans l'étape précédente pour la signature de provenance
+          base64-subjects: "${{ needs.build.outputs.hashes }}"
+
+      # Optionnel : publier ou utiliser l'attestation générée
+      - name: Upload Attestation (si nécessaire)
+        run: |
+          # Télécharge ou publie l'attestation de provenance, selon ton besoin
+          echo "Attestation générée et prête à être utilisée."
