@@ -31,7 +31,7 @@ jobs:
           echo "hashes=$(sha256sum $artifact | base64 -w0)" >> "$GITHUB_OUTPUT"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@3cea5372237819ed00197afe530f5a7ea3e805c8
         with:
           name: slsa-jar
           path: build/libs/slsa-lvl-0.0.1-SNAPSHOT.jar
