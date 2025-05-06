@@ -48,6 +48,7 @@ jobs:
     with:
       base64-subjects: "${{ needs.build.outputs.hashes }}"
       upload-assets: true
+      upload-to-rekor: true
 
   release:
     needs: [build, provenance]
