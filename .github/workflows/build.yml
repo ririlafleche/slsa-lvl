@@ -51,19 +51,16 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: slsa-jar
-      - name: Generate build provenance attestation
+      - name: Generate build provenance attestations
+        id: attestation
         uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
         with:
           subject-path: "slsa-lvl-0.0.1-SNAPSHOT.jar"
-      - name: ls tmp
-        run: ls /tmp -a
-      - name: ls
-        run: ls
       - name: upload attestation
         uses: actions/upload-artifact@v4.6.2
         with:
           name: attestation
-          path: /tmp/attestation.json
+          path: ${{ steps.attestation.outputs.bundle-path }}
           if-no-files-found: error
           retention-days: 5
 
