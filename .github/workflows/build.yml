@@ -42,9 +42,8 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     permissions:
-      actions: read
       id-token: write
-      contents: write
+      attestations: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -55,7 +54,7 @@ jobs:
       - name: Generate build provenance attestation
         uses: actions/attest-build-provenance@db473fddc028af60658334401dc6fa3ffd8669fd # v2.3.0
         with:
-          subject-path: "slsa-lvl-0.0.1-SNAPSHOT.jar"
+          subject-path: "slsa-jar"
 
   release:
     needs: [build, provenance]
