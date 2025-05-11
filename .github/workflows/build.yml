@@ -3,8 +3,6 @@ name: Build and generate SLSA provenance
 on:
   workflow_dispatch:
   push:
-    tags:
-      - 'v*'  # Ex: v1.0.0
 
 jobs:
   build:
